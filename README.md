@@ -2,7 +2,7 @@
 
 Meow... BigCat is a big number library for Godot Engine / GDScript.
 
-| ![BigCat, Big number library for Godot Engine](media/BigCat.jpeg)
+![BigCat, Big number library for Godot Engine](media/BigCat.jpeg)
 
 ## Features
 
@@ -32,7 +32,7 @@ However, 128-bit random prime generation is taking an "acceptable" time, for 256
 
 ## Installation
 
-Clone BigCat repository into your project directory and you'll have the BigCat module.
+Clone BigCat repository into your project directory and you'll have the `BigCat` module.
 
 ## Usage
 
@@ -52,6 +52,8 @@ func _ready():
 ## Examples
 
 ### 256-bit Prime Generation
+
+Even 256-bit primes take so long time to generate but it is still acceptable. 128-bit is more acceptable.
 
 Single-threaded:
 
