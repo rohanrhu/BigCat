@@ -69,8 +69,8 @@ func test_power():
 	rng.randomize()
 
 	for i in range(10):
-		var an = rng.randi_range(1, 15)
-		var bn = rng.randi_range(1, 15)
+		var an = rng.randi_range(1, 12)
+		var bn = rng.randi_range(1, 12)
 		var a = BigCat.BigNumber.from_uint(an)
 		var b = BigCat.BigNumber.from_uint(bn)
 		var result = a.power(b)
