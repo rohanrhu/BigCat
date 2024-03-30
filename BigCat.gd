@@ -258,6 +258,7 @@ class BigNumber:
 				print("Trying random number: ", number._to_string())
 
 			if number.is_probably_prime(p_witness):
+				print("Prime found: ", number._to_string())
 				if BigNumber.prime_gen_result:
 					return null
 				
@@ -498,6 +499,8 @@ class BigNumber:
 		return quotient
 	
 	func mutable_increment():
+		var _is_positive = self.is_zero() or not self.is_negative
+		
 		self.value[0] += 1
 		var carry = 0
 		for i in range(self.value.size()):
@@ -509,8 +512,12 @@ class BigNumber:
 				carry = 0
 		if carry > 0:
 			self.value.append(carry)
+		
+		self.is_negative = not _is_positive
 	
 	func mutable_decrement():
+		var _is_negative = self.is_zero() or self.is_negative
+
 		self.value[0] -= 1
 		var borrow = 0
 		for i in range(self.value.size()):
@@ -522,6 +529,8 @@ class BigNumber:
 				borrow = 0
 		while self.value.size() > 1 and self.value[-1] == 0:
 			self.value.resize(self.value.size() - 1)
+		
+		self.is_negative = _is_negative
 	
 	func increment() -> BigNumber:
 		var result: BigNumber = self.duplicate()
@@ -534,20 +543,36 @@ class BigNumber:
 		return result
 	
 	func power(p_exponent: BigNumber) -> BigNumber:
-		var base: BigNumber = self.duplicate()
-		var result: BigNumber = BigNumber.from_uint(1)
+		if p_exponent.is_zero():
+			return BigNumber.from_uint(1)
+		if p_exponent.is_negative:
+			print_debug("BigCat: Negative power is given. BigNumber doesn't have floating point numbers support. Returning 0...")
+			return BigNumber.from_uint(0)
+		
+		var result: BigNumber = self.duplicate()
+		var exponent = p_exponent.subtract(BigNumber.ONE)
 
-		var powers = [base]
-		for i in range(1, p_exponent.value.size()):
-			powers.append(powers[i - 1].add(powers[i - 1]))
-
-		for i in range(p_exponent.value.size() - 1, -1, -1):
-			if p_exponent.value[i] == 1:
-				result = result.add(powers[i])
-
-		result.is_negative = self.is_negative and p_exponent.is_odd()
+		while exponent.is_greater_than(BigNumber.ZERO):
+			result = result.multiply(self)
+			exponent = exponent.decrement()
 
 		return result
+	
+	func power_uint(p_exponent: int) -> BigNumber:
+		return self.power(BigNumber.from_uint(p_exponent))
+	
+	func sqrt() -> BigNumber:
+		if self.is_zero():
+			return BigNumber.from_uint(0)
+		
+		var x = self.duplicate()
+		var y = x.add(BigNumber.from_uint(1)).shift_right_uint(1)
+
+		while y.is_less_than(x):
+			x = y
+			y = x.add(self.divide(x)).shift_right_uint(1)
+
+		return x
 	
 	func mutable_modulo(p_modulus: BigNumber):
 		var remainder: BigNumber = BigNumber.from_uint(0)

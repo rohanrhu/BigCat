@@ -64,6 +64,23 @@ func test_four_operations():
 	
 	print("All four operations tests passed!")
 
+func test_power():
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+
+	for i in range(10):
+		var an = rng.randi_range(1, 15)
+		var bn = rng.randi_range(1, 15)
+		var a = BigCat.BigNumber.from_uint(an)
+		var b = BigCat.BigNumber.from_uint(bn)
+		var result = a.power(b)
+		var expected = pow(an, bn)
+		
+		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_power failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.to_uint() == expected, "test_power failed: " + str(result.to_uint()) + " != " + str(expected))
+
+	print("All power tests passed!")
+
 func test_modulo():
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -80,6 +97,21 @@ func test_modulo():
 		assert(result.to_uint() == expected, "test_modulo failed: " + str(result.to_uint()) + " != " + str(expected))
 
 	print("All modulo tests passed!")
+
+func test_sqrt():
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+
+	for i in range(10):
+		var an = rng.randi_range(1, 1000000)
+		var a = BigCat.BigNumber.from_uint(an)
+		var result = a.sqrt()
+		var expected = int(sqrt(an))
+		
+		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_sqrt failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.to_uint() == expected, "test_sqrt failed: " + str(result.to_uint()) + " != " + str(expected))
+
+	print("All sqrt tests passed!")
 
 func power_modulo(base: int, exponent: int, modulus: int) -> int:
 	if modulus == 1:
@@ -153,6 +185,8 @@ func _ready():
 	test_int_conversion()
 	test_byte_conversion()
 	test_four_operations()
+	test_power()
 	test_modulo()
+	test_sqrt()
 	test_power_modulo()
 	test_rsa()

@@ -266,6 +266,14 @@ Returns the quotient of the `BigNumber` object and the given number.
 
 Returns the quotient of the `BigNumber` object and the given number.
 
+#### `BigNumber.power(p_exponent: BigNumber) -> BigNumber`
+
+Returns the power of the `BigNumber` object with the given `BigNumber` object.
+
+#### `BigNumber.power_uint(p_exponent: int) -> BigNumber`
+
+Returns the power of the `BigNumber` object with the given number.
+
 Comparison Operations:
 
 #### `BigNumber.is_less_than(p_other: BigNumber) -> bool`
