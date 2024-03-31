@@ -42,8 +42,8 @@ Clone BigCat repository into your project directory and you'll have the `BigCat`
 extends Node
 
 func _ready():
-    var a = BigCat.BigNumber.new(812387138271)
-    var b = BigCat.BigNumber.new(129381932182)
+    var a = BigCat.BigNumber.from_uint(812387138271)
+    var b = BigCat.BigNumber.from_string("091283091823908109238109382091823091")
     var c = a.add(b)
     print(str(c))
 
