@@ -1,9 +1,36 @@
 extends Control
 
 func test_int_conversion():
-	var a = BigCat.BigNumber.from_uint(355841233)
-	assert(a.to_uint() == 355841233, "test_int_conversion failed!")
+	var rng = RandomNumberGenerator.new()
+	
+	for i in range(0, 100):
+		var num = rng.randi_range(1, 9000000000)
+		var big = BigCat.BigNumber.from_uint(num)
+		assert(big.to_uint() == num, "test_int_conversion() failed! " + str(big.to_uint()) + " != " + str(num))
+	
 	print("Int conversion test passed!")
+
+func test_string_conversion():
+	var rng = RandomNumberGenerator.new()
+	
+	for i in range(0, 100):
+		var num = rng.randi_range(1, 9000000000)
+		var big = BigCat.BigNumber.from_string(str(num))
+		assert(str(big) == str(num), "test_string_conversion() failed! " + str(big) + " != " + str(num))
+	
+	print("String conversion test passed!")
+
+func test_hex_conversion():
+	var rng = RandomNumberGenerator.new()
+
+	for i in range(0, 100):
+		var num = rng.randi_range(1, 9000000000)
+		var big = BigCat.BigNumber.from_uint(num)
+		var hex = big.to_hex()
+		var from_hex = BigCat.BigNumber.from_hex(hex)
+		assert(from_hex.to_uint() == num, "test_hex_conversion() failed! " + str(from_hex.to_uint()) + " != " + str(num))
+	
+	print("Hex conversion test passed!")
 
 func test_byte_conversion():
 	var bytes = [0, 2, 4, 0]
@@ -24,29 +51,28 @@ func test_big_and_uint(p_uint: int, q_uint: int):
 	p = BigCat.BigNumber.from_uint(p_uint)
 	q = BigCat.BigNumber.from_uint(q_uint)
 	
-
 	var sum = p.add(q)
 	var native_sum = p_uint + q_uint
-	assert(sum.to_uint() == native_sum, "test_big_and_uint failed: " + str(p_uint) + " " + str(q_uint) + " " + str(sum.to_uint()) + " " + str(native_sum))
+	assert(sum.to_uint() == native_sum, "test_big_and_uint() failed: " + str(p_uint) + " " + str(q_uint) + " " + str(sum.to_uint()) + " " + str(native_sum))
 	
 	var minus = p.subtract(q)
 	var native_minus = p_uint - q_uint
-	assert(minus.to_uint() == native_minus, "test_big_and_uint failed: " + str(p_uint) + " " + str(q_uint) + " " + str(minus.to_uint()) + " " + str(native_minus))
+	assert(minus.to_uint() == native_minus, "test_big_and_uint() failed: " + str(p_uint) + " " + str(q_uint) + " " + str(minus.to_uint()) + " " + str(native_minus))
 	
 	var product = p.multiply(q)
 	var native_product = p_uint * q_uint
-	assert(product.to_uint() == native_product, "test_big_and_uint failed: " + str(p_uint) + " " + str(q_uint) + " " + str(product.to_uint()) + " " + str(native_product))
+	assert(product.to_uint() == native_product, "test_big_and_uint() failed: " + str(p_uint) + " " + str(q_uint) + " " + str(product.to_uint()) + " " + str(native_product))
 	
 	var divided = p.divide(q)
 	var native_divided = floor(p_uint) / q_uint
-	assert(divided.to_uint() == native_divided, "test_big_and_uint failed: " + str(p_uint) + " " + str(q_uint) + " " + str(divided.to_uint()) + " " + str(native_divided))
+	assert(divided.to_uint() == native_divided, "test_big_and_uint() failed: " + str(p_uint) + " " + str(q_uint) + " " + str(divided.to_uint()) + " " + str(native_divided))
 	
 	var result = sum.to_uint() == native_sum and \
 				 minus.to_uint() == native_minus and \
 				 product.to_uint() == native_product and \
 				 divided.to_uint() == native_divided
 
-	assert(result, "test_big_and_uint failed: " + str(p_uint) + " " + str(q_uint) + " " + str(sum.to_uint()) + " " + str(native_sum) + " " + str(minus.to_uint()) + " " + str(native_minus) + " " + str(product.to_uint()) + " " + str(native_product) + " " + str(divided.to_uint()) + " " + str(native_divided))
+	assert(result, "test_big_and_uint() failed: " + str(p_uint) + " " + str(q_uint) + " " + str(sum.to_uint()) + " " + str(native_sum) + " " + str(minus.to_uint()) + " " + str(native_minus) + " " + str(product.to_uint()) + " " + str(native_product) + " " + str(divided.to_uint()) + " " + str(native_divided))
 
 	return result
 
@@ -76,8 +102,8 @@ func test_power():
 		var result = a.power(b)
 		var expected = pow(an, bn)
 		
-		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_power failed: " + str(result.to_uint()) + " != " + str(expected))
-		assert(result.to_uint() == expected, "test_power failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_power() failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.to_uint() == expected, "test_power() failed: " + str(result.to_uint()) + " != " + str(expected))
 
 	print("All power tests passed!")
 
@@ -93,8 +119,8 @@ func test_modulo():
 		var result = a.modulo(b)
 		var expected = an % bn
 		
-		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_modulo failed: " + str(result.to_uint()) + " != " + str(expected))
-		assert(result.to_uint() == expected, "test_modulo failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_modulo() failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.to_uint() == expected, "test_modulo() failed: " + str(result.to_uint()) + " != " + str(expected))
 
 	print("All modulo tests passed!")
 
@@ -108,8 +134,8 @@ func test_sqrt():
 		var result = a.sqrt()
 		var expected = int(sqrt(an))
 		
-		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_sqrt failed: " + str(result.to_uint()) + " != " + str(expected))
-		assert(result.to_uint() == expected, "test_sqrt failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.is_equal_to(BigCat.BigNumber.from_uint(expected)), "test_sqrt() failed: " + str(result.to_uint()) + " != " + str(expected))
+		assert(result.to_uint() == expected, "test_sqrt() failed: " + str(result.to_uint()) + " != " + str(expected))
 
 	print("All sqrt tests passed!")
 
@@ -145,7 +171,7 @@ func test_power_modulo():
 		var expected = power_modulo(an, bn, cn)
 		
 		if result.to_uint() != expected:
-			print("test_power_modulo: ", i, " failed: ", result.to_uint(), " != ", expected)
+			print("test_power_modulo(): ", i, " failed: ", result.to_uint(), " != ", expected)
 		
 		assert(result.is_equal_to( BigCat.BigNumber.from_uint(expected)))
 
@@ -154,8 +180,8 @@ func test_power_modulo():
 func test_rsa():
 	print("Testing RSA... (This may take long time because BigCat is not a cheetah.)")
 
-	var p = BigCat.BigNumber.generate_prime_threaded(128, 2, 4)
-	var q = BigCat.BigNumber.generate_prime_threaded(128, 2, 4)
+	var p = BigCat.BigNumber.generate_prime(128)
+	var q = BigCat.BigNumber.generate_prime(128)
 	var n = p.multiply(q)
 	var phi = p.subtract(BigCat.BigNumber.from_int(1)).multiply(q.subtract(BigCat.BigNumber.from_int(1)))
 	var e = BigCat.BigNumber.from_int(65537)
@@ -176,13 +202,15 @@ func test_rsa():
 	print("Original Scalar: \t", str(big))
 	print("Decrypted Scalar: \t", str(decrypted))
 
-	assert(big.is_equal_to(decrypted), "RSA test failed!")
-	assert(big.to_chars() == decrypted.to_chars(), "RSA test failed!")
+	assert(big.is_equal_to(decrypted), "test_rsa() failed! big != decrypted")
+	assert(big.to_chars() == decrypted.to_chars(), "test_rsa() failed! big.to_chars() != decrypted.to_chars()")
 
 	print("RSA test passed!")
 
 func _ready():
 	test_int_conversion()
+	test_string_conversion()
+	test_hex_conversion()
 	test_byte_conversion()
 	test_four_operations()
 	test_power()

@@ -11,7 +11,7 @@ Meow... BigCat is a big number library for Godot Engine / GDScript.
 * Conversions:
   * Conversions between byte arrays and big numbers
   * Conversions between signed char arrays and big numbers (It still doesn't guarantee to give the original ASCII strings.)
-  * Conversions between strings and big numbers
+  * Conversions between strings (in any base) and big numbers
   * Conversions between big numbers and integers
 * Arithmetic Operations (addition, subtraction, multiplication, division)
 * Comparison Operations (less than, greater than, equal to)
@@ -61,7 +61,7 @@ Single-threaded:
 extends Node
 
 func _ready():
-    var prime = BigCat.BigNumber.generate_prime(256)
+    var prime = BigCat.BigNumber.generate_prime(128)
     print("Prime: ", str(prime))
 ```
 
@@ -71,7 +71,7 @@ Multi-threaded:
 extends Node
 
 func _ready():
-    var prime = BigCat.BigNumber.generate_prime_threaded(256, 2, 4)
+    var prime = BigCat.BigNumber.generate_prime_threaded(128, 2, 4)
     print("Prime: ", str(prime))
 ```
 
@@ -90,11 +90,9 @@ func _ready():
     print("Generating RSA key pair...")
 
     var bits = 128
-    var witness = 2
-    var num_threads = 4
 
-    var p = BigCat.BigNumber.generate_prime_threaded(bits, witness, num_threads)
-    var q = BigCat.BigNumber.generate_prime_threaded(bits, witness, num_threads)
+    var p = BigCat.BigNumber.generate_prime(bits)
+    var q = BigCat.BigNumber.generate_prime(bits)
     var n = p.multiply(q)
     var phi = p.subtract(BigCat.BigNumber.from_int(1)).multiply(q.subtract(BigCat.BigNumber.from_int(1)))
     var e = BigCat.BigNumber.from_int(65537)
@@ -162,6 +160,14 @@ Creates a new `BigNumber` object from the given signed `char` array.
 
 Creates a new `BigNumber` object from the given string.
 
+#### `BigNumber.from_string_base(value: String, p_base: int) -> BigNumber`
+
+Creates a new `BigNumber` object from the given string in the given base.
+
+#### `BigNumber.from_hex(value: String) -> BigNumber`
+
+Creates a new `BigNumber` object from the given hexadecimal string.
+
 #### `BigNumber.from_uint(value: int) -> BigNumber`
 
 Creates a new `BigNumber` object from the given unsigned integer.
@@ -207,6 +213,14 @@ Returns the signed `char` array representation of the `BigNumber` object.
 #### `BigNumber.to_string() -> String`
 
 Returns the string representation of the `BigNumber` object. You can do `str(big_number)` too.
+
+#### `BigNumber.to_string_base(p_base: int) -> String`
+
+Returns the string representation of the `BigNumber` object in the given base.
+
+#### `BigNumber.to_hex() -> String`
+
+Returns the hexadecimal string representation of the `BigNumber` object.
 
 #### `BigNumber.to_int() -> int`
 

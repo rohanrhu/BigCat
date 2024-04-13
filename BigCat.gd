@@ -14,6 +14,8 @@ static var ATOMIC_BYTES = floor(ATOMIC_BITS) / ATOMIC_BITS
 static var ATOMIC_MAX = int(pow(2, ATOMIC_BITS)) # Godot's Native Max: 9223372036854775807
 static var ATOMIC_MAX_MINUS_ONE = ATOMIC_MAX - 1
 
+static var BASE_DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
+
 static var IS_VERBOSE = false
 
 static func set_atomic_bits(p_bits: int) -> void:
@@ -144,22 +146,35 @@ class BigNumber:
 
 		return BigNumber.new(result)
 
-	static func from_string(p_number: String) -> BigNumber:
+	static func from_string_base(p_number: String, p_base: int) -> BigNumber:
 		var number_str = p_number + ""
 		var _is_negative = false
 
 		if number_str[0] == "-":
 			_is_negative = true
-			number_str = number_str.substr(1, number_str.length() - 1)
-		
+			number_str = number_str.substr(1)
+
 		var bn = BigNumber.new()
 		for i in number_str:
-			bn = bn.multiply_uint(10)
-			bn = bn.add_uint(i.to_ascii_buffer()[0] - 48)
-		
+			var digit_value = BigCat.BASE_DIGITS.find(i)
+			if digit_value == -1 or digit_value >= p_base:
+				return BigNumber.new()
+			bn = bn.multiply_uint(p_base)
+			bn = bn.add_uint(digit_value)
+
 		bn.is_negative = _is_negative
-		
+
 		return bn
+
+	static func from_string(p_number: String) -> BigNumber:
+		return BigNumber.from_string_base(p_number, 10)
+
+	static func from_hex(p_number: String) -> BigNumber:
+		var number = p_number
+		if number.substr(0, 2) == "0x":
+			number = number.substr(2)
+		
+		return BigNumber.from_string_base(number, 16)
 
 	static func from_random(p_bits: int) -> BigNumber:
 		var bytes_num = floor(p_bits) / int(BigCat.ATOMIC_BITS)
@@ -894,7 +909,11 @@ class BigNumber:
 
 		return result
 
-	func _to_string() -> String:
+	func to_string_base(p_base: int) -> String:
+		if p_base < 2 or p_base > BigCat.BASE_DIGITS.length():
+			print_debug("Invalid base: " + str(p_base))
+			return ""
+
 		var result: Array = []
 		var number: Array = self.value.duplicate()
 
@@ -902,13 +921,13 @@ class BigNumber:
 			var remainder = 0
 			for i in range(number.size() - 1, -1, -1):
 				var temp = remainder * BigCat.ATOMIC_MAX + number[i]
-				number[i] = temp / 10
-				remainder = temp % 10
+				number[i] = temp / p_base
+				remainder = temp % p_base
 
 			while number.size() > 0 and number[number.size() - 1] == 0:
 				number.remove_at(number.size() - 1)
 
-			result.append(remainder)
+			result.append(BigCat.BASE_DIGITS[remainder])
 
 		if result.size() == 0:
 			return "0"
@@ -921,3 +940,9 @@ class BigNumber:
 			str_result = "-" + str_result
 
 		return str_result
+
+	func to_hex(p_prefix: String = "0x") -> String:
+		return p_prefix + self.to_string_base(16)
+
+	func _to_string() -> String:
+		return self.to_string_base(10)
