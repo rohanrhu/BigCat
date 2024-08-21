@@ -15,6 +15,7 @@ static var ATOMIC_MAX = int(pow(2, ATOMIC_BITS)) # Godot's Native Max: 922337203
 static var ATOMIC_MAX_MINUS_ONE = ATOMIC_MAX - 1
 
 static var BASE_DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
+static var ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 static var IS_VERBOSE = false
 
@@ -940,6 +941,57 @@ class BigNumber:
 			str_result = "-" + str_result
 
 		return str_result
+
+	const pre_aa_notation := [
+		"k","m","b","t"
+	]
+	func to_aa_notation(precision: int = 3, p_base: int = 10) -> String:
+		var number: Array = self.value.duplicate()
+		var digits: PackedByteArray = []
+		
+		var prefix = "-" if self.is_negative else ""
+		
+		while number.size() > 0:
+			var remainder = 0
+			for i in range(number.size() - 1, -1, -1):
+				var temp = remainder * BigCat.ATOMIC_MAX + number[i]
+				number[i] = temp / p_base
+				remainder = temp % p_base
+
+			while number.size() > 0 and number[number.size() - 1] == 0:
+				number.remove_at(number.size() - 1)
+			
+			digits.push_back(BigCat.BASE_DIGITS[remainder].unicode_at(0))
+		
+		if digits.size() == 0:
+			return "0"
+		
+		digits.reverse()
+		if digits.size() < precision or digits.size() <= 3:
+			return digits.get_string_from_ascii()
+		
+		var remainder := 1 if precision == 0 else digits.size() % precision
+		var thousands := int((digits.size() - 1) / 3)
+		if remainder != 0:
+			digits.insert(remainder, ".".unicode_at(0))
+			digits.resize(precision + 1)
+		else:
+			digits.resize(precision)
+			
+		var result := digits.get_string_from_ascii()
+		if thousands <= pre_aa_notation.size():
+			return prefix + result + pre_aa_notation[thousands - 1]
+		 
+		var alphabet_size := len(BigCat.ALPHABET)
+		thousands -= pre_aa_notation.size() + 1 # Remove last most
+			
+		if (thousands / alphabet_size) >= alphabet_size:
+			return prefix + "INFINITY"
+		
+		var first = BigCat.ALPHABET[thousands % alphabet_size]
+		var second = BigCat.ALPHABET[thousands / alphabet_size]
+		
+		return prefix + result + second + first
 
 	func to_hex(p_prefix: String = "0x") -> String:
 		return p_prefix + self.to_string_base(16)
