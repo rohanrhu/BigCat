@@ -207,6 +207,25 @@ func test_rsa():
 
 	print("RSA test passed!")
 
+func test_aa_notation():
+	const expect_postfix := [
+		"k", "m", "b", "t", 
+		"aa", "ab", "ac", "ad", "ae", "af", 
+		"ag", "ah", "ai", "aj", "ak", "al", 
+		"am", "an", "ao", "ap", "aq", "ar",
+		"as", "at", "au", "av", "aw", "ax",
+		"ay", "az", "ba", "bb", "bc", "bd"
+	]
+	
+	var thousands := 3
+	for postfix in expect_postfix:
+		var big = BigCat.BigNumber.from_int(10)
+		big = big.power_uint(thousands)
+		var res_postfix := big.to_aa_notation(0).substr(1)
+		assert(postfix == res_postfix)
+		thousands += 3
+	
+
 func _ready():
 	test_int_conversion()
 	test_string_conversion()
@@ -218,3 +237,4 @@ func _ready():
 	test_sqrt()
 	test_power_modulo()
 	test_rsa()
+	test_aa_notation()
